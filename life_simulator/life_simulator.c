@@ -13,11 +13,21 @@ typedef struct {
 typedef struct {
     ProfileStats profile_stats;
     float money_earned;
+    int is_valid;
 } WorkResult;
 
 
 WorkResult work_data() {
-    WorkResult work_result = {0};
+    static WorkResult work_result = {
+        {.money=0, .energy=100},
+        .money_earned=0, .is_valid=1
+    };
+
+    if (work_result.profile_stats.energy < 50) {
+        WorkResult empty = {{0, 0, 0}, 0, 0};
+
+        return empty;
+    };
 
     work_result.money_earned = 10; // Hard coded
 
@@ -31,6 +41,12 @@ WorkResult work_data() {
 
 void work() {
     WorkResult work_result = work_data();
+
+    if (!work_result.is_valid) {
+        printf("voce nao tem energia suficiente, durma para recupera-la \n");
+
+        return;
+    };
 
     printf(
         "voce trabalhou duro! \n"
